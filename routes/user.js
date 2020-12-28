@@ -3,7 +3,9 @@ const User = require('../models/user')
 const mongoose = require('mongoose')
 
 router.get('/register', (req, res) => { 
-  res.render('accounts/register')
+  res.render('accounts/register', {
+    errors: req.flash('errors')
+  })
 })
 
 

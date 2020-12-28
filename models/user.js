@@ -35,7 +35,7 @@ const UserSchema = new Schema({
 // Hash the password before we even save it to the database
 UserSchema.pre('save', function (next) { 
   const user = this;
-  if (!user.isModified('password')) return next();
+  if (!user.isModified('password')) return next(user);
   bcrypt.genSalt(10, function (err, salt) { 
     if (err) return next(err);
     bcrypt.hash(user.password, salt, function (err, hash) { 
