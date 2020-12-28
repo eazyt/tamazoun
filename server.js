@@ -8,6 +8,8 @@ const engine = require('ejs-mate')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const flash = require('express-flash')
+const mongoStore = require('connect-mongo')(session)
+const passport = require('passport')
 
 const config = require('./config/config')
 
@@ -37,9 +39,19 @@ app.use(cookieParser())
 app.use(session({
   resave: true,
   saveUninitialized: true,
-  secret: config.secretKey
+  secret: config.secretKey,
+  store: new mongoStore({
+    url: config.database,
+    autoReconnect: true
+  })
 }))
 app.use(flash())
+app.use(passport.initialize());
+app.use(passport.session());
+app.use((req, res, next) => { 
+  res.locals.user = req.user;
+  next()
+})
 
 
 // use ejs-locals for all ejs templates:
