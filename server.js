@@ -1,22 +1,21 @@
-require('dotenv').config()
+
 const express = require("express")
 const morgan = require('morgan')
 const mogoose = require('mongoose')
 const bodyParser = require('body-parser')
-const User = require('./models/user')
-const ejs = require('ejs')
 const engine = require('ejs-mate')
 
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const flash = require('express-flash')
 
-const MONGODB_URL = process.env.DB_URI
-const PORT = process.env.PORT 
+const config = require('./config/config')
+
+const PORT = config.port
 
 const app = express()
 
-mogoose.connect(MONGODB_URL, {
+mogoose.connect(config.database, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -38,7 +37,7 @@ app.use(cookieParser())
 app.use(session({
   resave: true,
   saveUninitialized: true,
-  secret: 'secret'
+  secret: config.secretKey
 }))
 app.use(flash())
 
