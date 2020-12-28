@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 const Schema = mongoose.Schema
 
 
@@ -50,6 +51,13 @@ UserSchema.pre('save', function (next) {
 //compare password in the database and the one that the user type in 
 UserSchema.methods.comparePassword = function (password) { 
   return bcrypt.compareSync(password, this.password)
+}
+
+UserSchema.methods.gravatar = (size) => { 
+  if (!this.size) size = 200;
+  if (!this.email) return 'https://gravatar.com/avatar/?s' + size + '&id=retro';
+  const md5 = crypto.createHash('md5').update(this.email).digest('hex');
+  return 'https://gravatar.com/avatar/' + md5 + '?s=' + size + '&id=retro';
 }
 
 module.exports = mongoose.model('User', UserSchema);

@@ -43,6 +43,7 @@ router.post('/register', (req, res, next) => {
   user.profile.name = req.body.name;
   user.password = req.body.password;
   user.email = req.body.email;
+  user.profile.picture = user.gravatar();
 
   User.findOne({ email: req.body.email }, (err, userExists) => {
     if (userExists) {
@@ -69,5 +70,7 @@ router.get('/logout', (req, res, next) => {
     res.redirect('/');
   })
 })
+
+
   
 module.exports = router;
