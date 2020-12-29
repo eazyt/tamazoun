@@ -1,76 +1,103 @@
-const router = require('express').Router();
-const User = require('../models/user')
-// const mongoose = require('mongoose')
-const passport = require('passport')
-const passportConf = require('../config/passport')
+var router = require('express').Router();
+var User = require('../models/user');
+var passport = require('passport');
+var passportConf = require('../config/passport');
 
-router.get('/login', (req, res) => { 
-  if (req.user) return res.redirect('/')
+
+router.get('/login', function(req, res) {
+  if (req.user) return res.redirect('/');
   res.render('accounts/login', {
-    message: req.flash('loginMessage') 
-  })
-})
+    message: req.flash('loginMessage')
+  });
+});
 
 router.post('/login',
-  passport.authenticate('local', {
-    // successRedirect: '/profile',
-    failureRedirect: '/login',
-    failureFlash: true
-  }),
-  function (req, res) {
-    res.redirect('/profile');
-  });
+  passport.authenticate('local-login', {
+  successRedirect: '/profile',
+  failureRedirect: '/login',
+  failureFlash: true
+}));
 
-router.get('/profile', (req, res, next) => { 
-  // res.send('Welcome to your Dashboard' + req.user)
-  User.findOne({ _id: req.user.id }, (err, user) => { 
-    if(err) throw next(err)
+router.get('/profile', function(req, res, next) {
+  User.findOne({ _id: req.user._id }, function(err, user) {
+    if (err) return next(err);
+
     res.render('accounts/profile', {
       user: user
-    })
-  })
-})
+    });
 
-router.get('/register', (req, res) => { 
+  });
+
+
+});
+
+router.get('/register', function(req, res, next) {
   res.render('accounts/register', {
     errors: req.flash('errors')
-  })
-})
+  });
+});
 
-router.post('/register', (req, res, next) => {
-  const user = new User();
+router.post('/register', function(req, res, next) {
+  var user = new User();
 
   user.profile.name = req.body.name;
-  user.password = req.body.password;
   user.email = req.body.email;
+  user.password = req.body.password;
   user.profile.picture = user.gravatar();
 
-  User.findOne({ email: req.body.email }, (err, userExists) => {
-    if (userExists) {
-      req.flash('errors', 'Email already exists')
-      return res.redirect('/register')
+  User.findOne({ email: req.body.email }, function(err, existingUser) {
+
+    if (existingUser) {
+      req.flash('errors', 'Account with that email address already exists');
+      return res.redirect('/signup');
     } else {
-      user.save((err, user) => {
+      user.save(function(err, user) {
         if (err) return next(err);
-      //  return res.redirect('/')
-        req.logIn(user, (err)=> { 
+
+        req.logIn(user, function(err) {
           if (err) return next(err);
           res.redirect('/profile');
-        })
-      })
-    }
-  })
-})
 
-router.get('/logout', (req, res, next) => {
+        })
+      });
+    }
+  });
+});
+
+router.get('/logout', function (req, res, next) {
   // req.logout();
   // res.redirect('/')
   // next()
   req.session.destroy(function () {
     res.redirect('/');
-  })
-})
+  });
+});
 
+// router.get('/logout', function(req, res, next) {
+//   req.logout();
+//   res.redirect('/');
+// });
 
-  
+router.get('/edit-profile', function(req, res, next) {
+  res.render('accounts/edit-profile', {
+    message: req.flash('success')
+  });
+});
+
+router.post('/edit-profile', function(req, res, next) {
+  User.findOne({ _id: req.user._id }, function(err, user) {
+
+    if (err) return next(err);
+
+    if (req.body.name) user.profile.name = req.body.name;
+    if (req.body.address) user.address = req.body.address;
+
+    user.save(function(err) {
+      if (err) return next(err);
+      req.flash('success', 'Successfully Edited your profile');
+      return res.redirect('/profile');
+    });
+  });
+});
+
 module.exports = router;

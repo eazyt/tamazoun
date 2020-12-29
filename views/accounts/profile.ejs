@@ -7,12 +7,12 @@
   <img src="<%= user.profile.picture %>" class="img-circle img-fluid img-center" alt="user_image">
   <h1><%= user.profile.name %></h1>
   <p class="title-profile">CEO & Founder, Example</p>
-  <p>Harvard University</p>
+  <p>Address: <%= user.address %></p>
   <div style="margin: 24px 0;">
     <a href="#" class="my-a-tags-profile"><i class="fa fa-dribbble"></i></a>
     <a href="#" class="my-a-tags-profile"><i class="fa fa-twitter"></i></a>
     <a href="#" class="my-a-tags-profile"><i class="fa fa-linkedin"></i></a>
     <a href="#" class="my-a-tags-profile"><i class="fa fa-facebook"></i></a>
   </div>
-  <p><button class="profile-btn">Contact</button></p>
+  <a href="/edit-profile" class="profile-btn">Edit Profile</a>
 </div>

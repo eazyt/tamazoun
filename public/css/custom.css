@@ -16,7 +16,7 @@ body {
   font-size: 18px;
 }
 
-profile-btn {
+.profile-btn {
   border: none;
   outline: 0;
   display: inline-block;
