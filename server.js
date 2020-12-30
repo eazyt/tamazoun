@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser')
 const flash = require('express-flash')
 const mongoStore = require('connect-mongo')(session)
 const passport = require('passport')
+const Category = require('./models/category')
 
 const config = require('./config/config')
 
@@ -51,6 +52,14 @@ app.use(passport.session());
 app.use((req, res, next) => { 
   res.locals.user = req.user;
   next()
+})
+
+app.use((req, res, next) => { 
+  Category.find({}, (err, categories) => { 
+    if (err) return next(err + 'MIDDLEWARE ERROR');
+    res.locals.categories = categories
+    next();
+  })
 })
 
 

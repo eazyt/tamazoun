@@ -11,8 +11,22 @@
       <a class="navbar-brand" href="/">OnlineShop</a>
     </div>
 
+    
     <ul class="nav navbar navbar-right">
+
+      <li>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories</a>
+        <ul class="dropdown-menu">
+          <% for (let i=0; i < categories.length; i++) { %>
+            
+            <li><a><%= categories[i].name %></a></li>
+
+          <% } %>
+        </ul>
+      </li>
+
       <% if(!user) { %>
+
       <li>
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login / Sign Up</a>
         <ul class="dropdown-menu">
