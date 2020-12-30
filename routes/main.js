@@ -1,6 +1,26 @@
 const router = require('express').Router();
 const Product = require('../models/products')
 
+function paginate(req, res, next) { 
+  const perPage = 9;
+  const page = req.params.page;
+
+  Product.find()
+    .skip(perPage * page)
+    .limit(perPage)
+    .populate('category')
+    .exec((err, products) => {
+      if (err) return next(err);
+      Product.count().exec((err, count) => {
+        if (err) return next(err);
+        res.render('main/product-main', {
+          products: products,
+          pages: count / perPage
+        })
+      })
+    })
+}
+
 Product.createMapping((err, mapping) => { 
   if (err) {
     console.log('error creating mapping')
@@ -29,31 +49,39 @@ router.post('/search', (req, res) => {
 })
 
 router.get('/search', (req, res, next) => { 
-  if (req.query.q) { 
-    Product.search({
-      query_string: {
-        query: req.query.q
-      }
-    }, function (err, results) {
-        results;
-        if (err) return next(err);
-        const data = results.hits.hits.map((hit) => { 
-          return hit;
-        })
-        res.render('main/search-result', {
-          query: req.query.q,
-          data: data
-        })
-      })
-  }
+  paginate(req, res, next)
 })
 
 router.get('/', (req, res) => {
-  res.render('main/home')
+  if (req.user) { 
+    const perPage = 9;
+    const page = req.params.page;
+
+    Product.find()
+      .skip(perPage * page)
+      .limit( perPage )
+      .populate('category')
+      .exec((err, products) => { 
+        if (err) return next(err);
+        Product.count().exec((err, count) => { 
+          if (err) return next(err);
+          res.render('main/product-main', {
+            products: products,
+            pages: count / perPage
+          })
+        })
+      })
+  } else {
+    res.render('main/home')
+  }
 })
 
 router.get('/about', (req, res) => {
   res.render('main/about')
+})
+
+router.get('/page/:page', (req, res, next) => { 
+  paginate(req, res, next)
 })
 
 router.get('/products/:id', async function(req, res, next) {
