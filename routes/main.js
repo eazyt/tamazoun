@@ -49,28 +49,29 @@ router.post('/search', (req, res) => {
 })
 
 router.get('/search', (req, res, next) => { 
-  paginate(req, res, next)
+  console.log(search_term)
+  if (req.query.q) { 
+    Product.search({
+      query_string: {
+        query: req.query.q
+      }
+    }, function (err, results) {
+        results;
+        if (err) return next(err);
+        const data = results.hits.hits.map((hit) => { 
+          return hit;
+        })
+        res.render('main/search-result', {
+          query: req.query.q,
+          data: data
+        })
+      })
+  }
 })
 
 router.get('/', (req, res) => {
-  if (req.user) { 
-    const perPage = 9;
-    const page = req.params.page;
-
-    Product.find()
-      .skip(perPage * page)
-      .limit( perPage )
-      .populate('category')
-      .exec((err, products) => { 
-        if (err) return next(err);
-        Product.count().exec((err, count) => { 
-          if (err) return next(err);
-          res.render('main/product-main', {
-            products: products,
-            pages: count / perPage
-          })
-        })
-      })
+  if(user){
+  paginate(req, res, next)
   } else {
     res.render('main/home')
   }
@@ -80,9 +81,9 @@ router.get('/about', (req, res) => {
   res.render('main/about')
 })
 
-router.get('/page/:page', (req, res, next) => { 
+router.get('/page/:page', () => {
   paginate(req, res, next)
-})
+});
 
 router.get('/products/:id', async function(req, res, next) {
   // console.log(req.params.id)
