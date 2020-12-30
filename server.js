@@ -72,10 +72,12 @@ app.set('view engine', 'ejs'); // so you can render('index')
 const mainRoutes = require('./routes/main')
 const userRoutes = require('./routes/user')
 const adminRoutes = require('./routes/admin')
+const apiRoutes = require('./api/api')
 
 app.use(mainRoutes);
 app.use(userRoutes);
 app.use(adminRoutes);
+app.use('/api',apiRoutes);
 
 
 app.listen(PORT, (err) => { 
