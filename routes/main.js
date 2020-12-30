@@ -24,6 +24,30 @@ stream.on('error', function(err) {
   console.log(err)
 })
 
+router.post('/search', (req, res) => { 
+  res.redirect('/search?q=' + req.body.q)
+})
+
+router.get('/search', (req, res, next) => { 
+  if (req.query.q) { 
+    Product.search({
+      query_string: {
+        query: req.query.q
+      }
+    }, function (err, results) {
+        results;
+        if (err) return next(err);
+        const data = results.hits.hits.map((hit) => { 
+          return hit;
+        })
+        res.render('main/search-result', {
+          query: req.query.q,
+          data: data
+        })
+      })
+  }
+})
+
 router.get('/', (req, res) => {
   res.render('main/home')
 })
