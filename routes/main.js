@@ -69,8 +69,8 @@ router.get('/search', (req, res, next) => {
   }
 })
 
-router.get('/', (req, res) => {
-  if(user){
+router.get('/', (req, res, next) => {
+  if(req.user){
   paginate(req, res, next)
   } else {
     res.render('main/home')
