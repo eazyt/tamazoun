@@ -19,11 +19,15 @@ router.get('/products/:id', async function(req, res, next) {
           products: products
         })
     })
-    .catch((err) => { 
-      console.log(err + 'ERROR FROM CATCH PRODUCT FIND BY ID')
-    })
+});
 
-
+router.get('/product/:id', (req, res, next) => {
+  Product.findById({ _id: req.params.id }, (err, product) => {
+    if (err) return next(err);
+    res.render('main/product', {
+      product: product
+    });
+  });
 });
 
 
