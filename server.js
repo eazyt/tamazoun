@@ -1,20 +1,20 @@
 
-const express = require("express")
-const morgan = require('morgan')
-const mogoose = require('mongoose')
-const bodyParser = require('body-parser')
-const engine = require('ejs-mate')
+const express = require("express");
+const morgan = require('morgan');
+const mogoose = require('mongoose');
+const bodyParser = require('body-parser');
+const engine = require('ejs-mate');
 
-const session = require('express-session')
-const cookieParser = require('cookie-parser')
-const flash = require('express-flash')
-const mongoStore = require('connect-mongo')(session)
-const passport = require('passport')
-const Category = require('./models/category')
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const flash = require('express-flash');
+const MongoStore = require('connect-mongo')(session);
+const passport = require('passport');
+const Category = require('./models/category');
 
-const config = require('./config/config')
+const config = require('./config/config');
 
-const PORT = config.port
+const PORT = config.port;
 
 const app = express()
 
@@ -41,12 +41,12 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: config.secretKey,
-  store: new mongoStore({
+  store: new MongoStore({
     url: config.database,
     autoReconnect: true
   })
 }))
-app.use(flash())
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => { 
@@ -57,7 +57,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => { 
   Category.find({}, (err, categories) => { 
     if (err) return next(err + 'MIDDLEWARE ERROR');
-    res.locals.categories = categories
+    res.locals.categories = categories;
     next();
   })
 })
@@ -65,19 +65,19 @@ app.use((req, res, next) => {
 
 // use ejs-locals for all ejs templates:
 app.engine('ejs', engine);
-
-app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs'); // so you can render('index')
 
-const mainRoutes = require('./routes/main')
-const userRoutes = require('./routes/user')
-const adminRoutes = require('./routes/admin')
-const apiRoutes = require('./api/api')
+app.set('views', __dirname + '/views');
+
+const mainRoutes = require('./routes/main');
+const userRoutes = require('./routes/user');
+const adminRoutes = require('./routes/admin');
+const apiRoutes = require('./api/api');
 
 app.use(mainRoutes);
 app.use(userRoutes);
 app.use(adminRoutes);
-app.use('/api',apiRoutes);
+app.use('/api', apiRoutes);
 
 
 app.listen(PORT, (err) => { 

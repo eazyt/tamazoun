@@ -49,7 +49,7 @@ router.post('/search', (req, res) => {
 })
 
 router.get('/search', (req, res, next) => { 
-  console.log(search_term)
+  // console.log(search_term)
   if (req.query.q) { 
     Product.search({
       query_string: {
@@ -70,19 +70,19 @@ router.get('/search', (req, res, next) => {
 })
 
 router.get('/', (req, res, next) => {
-  if(req.user){
-  paginate(req, res, next)
+  if (req.user) {
+    paginate(req, res, next)
   } else {
-    res.render('main/home')
+    res.render('main/home');
   }
-})
+});
 
 router.get('/about', (req, res) => {
-  res.render('main/about')
-})
+  res.render('main/about');
+});
 
-router.get('/page/:page', () => {
-  paginate(req, res, next)
+router.get('/page/:page', (req, res, next) => {
+  paginate(req, res, next);
 });
 
 router.get('/products/:id', async function(req, res, next) {

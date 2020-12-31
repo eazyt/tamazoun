@@ -20,7 +20,8 @@ const CartSchema = new Schema({
       default: 1
     },
     price: {
-      type: Number
+      type: Number,
+      default: 0
     }
   }]
 })
