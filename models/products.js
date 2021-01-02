@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 
 const ProductSchema = new Schema({
   category: {
-    // type: Schema.Types.ObjectId,
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
+    // type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'
   },
   name: String,

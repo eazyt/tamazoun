@@ -1,8 +1,6 @@
 const router = require('express').Router();
-const cart = require('../models/cart');
 const Cart = require('../models/cart');
 const Product = require('../models/products');
-const { route } = require('./user');
 
 function paginate(req, res, next) { 
   const perPage = 9;
@@ -26,11 +24,11 @@ function paginate(req, res, next) {
 
 Product.createMapping((err, mapping) => { 
   if (err) {
-    console.log('error creating mapping')
-    console.log(err)
+    // console.log('error creating mapping')
+    // console.log(err)
   } else { 
-    console.log('Mapping created')
-    console.log(mapping)
+    // console.log('Mapping created')
+    // console.log(mapping)
   }
 })
 
@@ -49,29 +47,44 @@ stream.on('error', function(err) {
 
 
 router.get('/cart', (req, res, next) => { 
-  Cart
-    .findOne({ owner: req.user._id })
-    .populate('items.item')
-    .exec((err, foundCart)=>{ 
-      if (err) return next(err);
-      res.render('main/cart', {
-        cart: foundCart
+  // console.log(req.body.product_id + 'CODING!!!')
+  // console.log("THIS IS THE CART ROUTE!!")
+  if (req.user) {
+    Cart.findOne({ owner: req.user._id })
+      .populate('items.item')
+      .exec((err, foundCart) => {
+        // console.log(foundCart)
+        if (err) return next(err);
+        res.render('main/cart', {
+          foundCart: foundCart
+        })
       })
-    })
+  } else { 
+      res.render('accounts/login', {
+        message: req.flash('loginMessage')
+      });
+  }
 })
 
 
-router.post('product/:product_id', (req, res, next) => {
+router.post('/product/:product_id', (req, res, next) => {
+// router.post('/product/:id', (req, res, next) => {
+//   console.log(req.body)
+    // console.log('THIS IS POST ROUTE')
+//   res.send({ "msg": "Welcome to the POST product/product_id" })
   Cart.findOne({ owner: req.user._id }, (err, cart) => {
     cart.items.push({
       item: req.body.product_id,
       price: parseFloat(req.body.priceValue),
-      quantity: parseInt(req.body.quantity)
+      quantity: parseInt(req.body.quantity),
+      // image: req.body.image     //this works with cart schema items.image links to carts.ejs img->name
     })
+    // console.log(req.body.product_id + 'THIS THE ID OF THE PRODUCT SENT TO CART')
+    // console.log(cart.items.item + 'THIS THE ID OF THE PRODUCT SENT TO CART')
     cart.total = (cart.total + parseFloat(req.body.priceValue)).toFixed(2);
-
     cart.save((err) => {
       if (err) return next(err);
+      // console.log(cart + 'THIS THE SAVE ')
       return res.redirect('/cart')
     });
   });
@@ -120,20 +133,24 @@ router.get('/page/:page', (req, res, next) => {
   paginate(req, res, next);
 });
 
+// finding ITEMS that belong to a category
 router.get('/products/:id', async function(req, res, next) {
   // console.log(req.params.id)
   Product.find({ category: req.params.id })
-    .populate('category')
-    .exec((err, products) => { 
-      if (err) return next(err + 'ERROR FROM THEN PRODUCT FIND BY ID')
-        res.render('main/category', {
-          products: products
-        })
+  .populate('category')
+  .exec((err, products) => { 
+    if (err) return next(err + 'ERROR FROM THEN PRODUCT FIND BY ID')
+    res.render('main/category', {
+      products: products
     })
+  })
 });
 
 router.get('/product/:id', (req, res, next) => {
+  // console.log('THIS IS GET ROUTE')
   Product.findById({ _id: req.params.id }, (err, product) => {
+    // console.log(req.body)
+    // console.log(product)
     if (err) return next(err);
     res.render('main/product', {
       product: product

@@ -48,3 +48,7 @@ a:hover {
 #navbar-gap {
   margin-top: -2%
 }
+
+.product-image {
+  width: 100%
+}

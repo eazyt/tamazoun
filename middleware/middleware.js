@@ -6,7 +6,7 @@ module.exports = function (req, res, next) {
     Cart.findOne({ owner: req.user._id }, (err, cart) => {
       if (cart) {
         for (let i = 0; i < cart.items.length; i++) {
-          total += cart.items[1].quantity;
+          total += cart.items[i].quantity;
         }
         res.locals.cart = total;
       } else {

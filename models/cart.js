@@ -11,7 +11,7 @@ const CartSchema = new Schema({
     default: 0
   },
   items: [{
-    items: {
+    item: {
       type: Schema.Types.ObjectId,
       ref: 'Product'
     },
@@ -22,6 +22,9 @@ const CartSchema = new Schema({
     price: {
       type: Number,
       default: 0
+    },
+    image: {
+      type: String
     }
   }]
 })
