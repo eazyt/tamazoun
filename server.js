@@ -12,6 +12,8 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const Category = require('./models/category');
 
+const cartLength = require('./middleware/middleware')
+
 const config = require('./config/config');
 
 const PORT = config.port;
@@ -53,6 +55,8 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next()
 })
+
+app.use(cartLength)
 
 app.use((req, res, next) => { 
   Category.find({}, (err, categories) => { 
