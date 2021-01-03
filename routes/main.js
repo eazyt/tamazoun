@@ -2,6 +2,8 @@ const router = require('express').Router();
 const Cart = require('../models/cart');
 const Product = require('../models/products');
 
+const stripe = require('stripe')('sk_test_51I5WzSC61oZrgaYb3OGOLehbbgvwPoIpAMJ9QMKBDNPUjH0ZLYRoWxdjyBJoz5XE2qViTLmQOLavCc3pPCiEnC5U00c3hOWxsA')
+
 function paginate(req, res, next) { 
   const perPage = 9;
   const page = req.params.page;
@@ -170,6 +172,20 @@ router.post('/remove', (req, res, next) => {
       if (err) return next(err);
       req.flash('remove', 'Successfully removed item')
       res.redirect('/cart')
+    })
+  })
+})
+
+router.post('/payment', (req, res, next) => { 
+  const stripeToken = req.body.stripeToken;
+  const currentCharges = Math.round(req.body.stripeMoney * 100);
+  stripe.customers.create({
+    source: stripeToken,
+  }).then((customer) => { 
+    return stripe.charges.create({
+      maount: currentCharges,
+      currency: 'usd',
+      customer: customer.id
     })
   })
 })
