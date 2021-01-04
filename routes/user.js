@@ -20,18 +20,26 @@ router.post('/login',
   failureFlash: true
 }));
 
-router.get('/profile', function(req, res, next) {
-  User.findOne({ _id: req.user._id }, function(err, user) {
-    if (err) return next(err);
+// User.findOne({ _id: req.user._id })
+//   .((err, user) => {
+//   if (err) return next(err);
 
-    res.render('accounts/profile', {
-      user: user
+//   res.render('accounts/profile', {
+//     user: user
+//   });
+
+// })
+router.get('/profile', passort.authenticate, function (req, res, next) {
+  User.findOne({ _id: req.user._id })
+    .populate('history.item')
+    .exec((err, foundUser) => {
+      if (err) return next(err);
+
+      res.render('accounts/profile', {
+        user: foundUser
+      })
     });
-
-  });
-
-
-});
+})
 
 router.get('/register', function(req, res, next) {
   res.render('accounts/register', {
