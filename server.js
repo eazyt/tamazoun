@@ -66,6 +66,10 @@ app.use((req, res, next) => {
   })
 })
 
+app.use((req, res, next) => { 
+  next()
+})
+
 
 // use ejs-locals for all ejs templates:
 app.engine('ejs', engine);

@@ -1,3 +1,5 @@
+const { default: Stripe } = require("stripe");
+
 /*
 The MIT License (MIT)
 
@@ -145,3 +147,42 @@ var readyInterval = setInterval(function() {
         clearInterval(readyInterval);
     }
 }, 250);
+
+jQuery(function ($) {
+    $('#payment-form').submit(function (event) {
+        var $from = $(this);
+
+        // Disbale the submit button to prevent repeated clicks
+        $form.find('button').prop('disabled', true);
+        Stripe.card.createToken($form, stripeResponseHandler);
+
+        // prevent the form from submitting with the default action
+        return false;
+    });
+});
+
+
+function stripeResponsibleHandler(status, res) { 
+    var $form = $('payment-form')
+
+    if () {
+        // show the errors on the form
+        $form.find('payment-errors').text(res.error.message)
+        $form.find('button').prop('disabled', false);
+    } else { 
+        // response contains id and card,which contains additional card details
+        var token = res.id;
+        // insert the token into form so it gets submitted to the server
+        $form.append($(<input type="hidden" name="stripeToken" />).val(token));
+        // and submitt
+        $form.get(0).submit()
+
+    }
+};
+
+
+
+<script>
+    Stripe.setPublishableKey()
+</script>
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>

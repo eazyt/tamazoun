@@ -1,0 +1,191 @@
+<% layout('layout') -%>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-6">
+      <% if(message.length> 0) { %>
+        <div class="alert alert-success alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span arial-hidden="true">&times;</span>
+          </button>
+          <%= message %>
+        </div>
+      <% } %>
+
+      <!-- <%= foundCart %> -->
+      <% for (var i=0; i < foundCart.items.length; i++) { %>
+        <!-- console.log(<%= foundCart.items %>) -->
+        <div class="list-group">
+          <span class="list-group-item">
+            <div class="row">
+              <div class="col-md-3">
+                <span><img class="product-image" src="<%= foundCart.items[i].item.image %>"></span>
+              </div>
+              <div class="col-md-6">
+                <p class="list-group-item-heading"><%= foundCart.items[i].item.name %></p>
+              </div>
+              <div class="col-md-3">
+                <p><%= foundCart.items[i].quantity %></p>
+                <h4><%= foundCart.items[i].price %></h4>
+
+                <form action="/remove" method="post">
+                  <input type="hidden" name="item" value="<%= foundCart.items[i]._id %>">
+                  <input type="hidden" name="price" value="<%= foundCart.items[i].price %>">
+                  <button type="submit" type="button">Remove</button>
+                </form>
+              </div>
+            </div>
+          </span>
+        </div>
+
+      <% } %>
+
+    </div>
+    <div class="col-md-3">
+      
+    </div>
+
+    <!-- button for stripe payment -->
+    <div class="col-md-3">
+      <div class="list-group">
+        <span class="list-group-item">
+          <h4>Total: $ <span class="totalPrice"><%= foundCart.total %></span></h4>
+  
+          <div class="form-group">
+            <input type="hidden" value="<%= foundCart.total %>">
+            <button type="submit" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Check Out</button>
+          </div>
+        </span>
+      </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="myModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" >&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Stripe Payment</h4>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <div class="row">
+                <!-- You can make it whatever width you want. I'm making it full width
+                         on <= small devices and 4/12 page width on >= medium devices -->
+                <div class="col-xs-12 col-md-4">
+            
+            
+                  <!-- CREDIT CARD FORM STARTS HERE -->
+                  <div class="panel panel-default credit-card-box">
+                    <div class="panel-heading display-table">
+                      <div class="row display-tr">
+                        <h3 class="panel-title display-td">Payment Details</h3>
+                        <div class="display-td">
+                          <img class="img-fluid pull-right" src="/images/visa-mastercard-american-express.png">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel-body">
+                      <form role="form" id="payment-form" method="POST" action="/payment">
+                        <input type="hidden" name="stripeMoney" value="<%= foundCart.total %>">
+                        <div class="row">
+                          <div class="col-xs-12">
+                            <div class="form-group">
+                              <label for="cardNumber">CARD NUMBER</label>
+                              <div class="input-group">
+                                <input type="text" class="form-control" name="cardNumber" placeholder="Valid Card Number"
+                                  autocomplete="cc-number" required autofocus />
+                                <span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-xs-7 col-md-7">
+                            <div class="form-group">
+                              <label for="cardExpiry"><span class="hidden-xs">EXPIRATION</span><span
+                                  class="visible-xs-inline">EXP</span> DATE</label>
+                              <input type="text" class="form-control" name="expYear" placeholder="MM / YY" autocomplete="cc-exp"
+                                required />
+                            </div>
+                          </div>
+                          <div class="col-xs-5 col-md-5 pull-right">
+                            <div class="form-group">
+                              <label for="cardCVC">CV CODE</label>
+                              <input type="password" class="form-control" name="cvCode" placeholder="CVC" autocomplete="cc-csc"
+                                required />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-xs-12">
+                            <button class="btn btn-success btn-lg btn-block" type="submit">Pay US$<%= foundCart.total %> Now</button>
+                          </div>
+                        </div>
+                        <div class="row" style="display:none;">
+                          <div class="col-xs-12">
+                            <p class="payment-errors"></p>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <!-- CREDIT CARD FORM ENDS HERE -->
+            
+            
+                </div>
+            
+                <!-- <div class="col-xs-12 col-md-8" style="font-size: 12pt; line-height: 2em;">
+                  <p>
+                  <h1>Features:</h1>
+                  <ul>
+                    <li>As-you-type, input formatting</li>
+                    <li>Form field validation (also as you type)</li>
+                    <li>Graceful error feedback for declined card, etc</li>
+                    <li>AJAX form submission w/ visual feedback</li>
+                    <li>Creates a Stripe credit card token</li>
+                  </ul>
+                  </p>
+                  <p>Be sure to replace the dummy API key with a valid Stripe API key.</p>
+            
+                  <p>Built upon: Bootstrap, jQuery,
+                    <a href="http://jqueryvalidation.org/">jQuery Validation Plugin</a>,
+                    <a href="https://github.com/stripe/jquery.payment">jQuery.payment library</a>,
+                    and <a href="https://stripe.com/docs/stripe.js">Stripe.js</a>
+                  </p>
+                </div> -->
+            
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <a href="/" type="button" class="btn btn-primary" >Continue Shopping</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
