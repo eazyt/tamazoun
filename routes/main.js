@@ -2,6 +2,8 @@ const router = require('express').Router();
 const Cart = require('../models/cart');
 const Product = require('../models/products');
 const stripeSecrets = require('../config/stripe-secrets')
+const async = require('async');
+const user = require('../models/user');
 
 
 // secret-key
@@ -226,7 +228,39 @@ router.post('/payment', function (req, res) {
       });
     })
     .then((charge) => {
-      res.redirect('/profile') // If no error occurs 
+      async.waterfall([
+        function(callback) { 
+          Cart.findOne({ owner: req.user._id }, (err, cart) => { 
+            callback(err, cart)
+          })
+        },
+        function (cart,callback) { 
+          user.findOne({ _id: req.user._id }, (err, user) => {
+            if (user) {
+              for (let i = 0; i < cart.length; i++) {
+                user.history.push({
+                  item: cart.items[i].item,
+                  paid: cart.items[i].price
+                });
+              }
+
+              user.save((err, user) => {
+                if (err) return next(err);
+                callback(err, user)
+              });
+            }
+          });
+        },
+        function (user) { 
+          Cart.update({ owner: user._id }, { $set: { items: [], total: 0 } }, (err, updated) => { 
+            if (updated) { 
+              res.redirect('/profile')
+            }
+          })
+        },
+      ])
+
+      // res.redirect('/profile') // If no error occurs 
       // res.send("Success") // If no error occurs 
     })
     .catch((err) => {
