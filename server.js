@@ -87,6 +87,8 @@ app.use(userRoutes);
 app.use(adminRoutes);
 app.use('/api', apiRoutes);
 
+app.use((request, response) => response.render('main/404'))
+
 
 app.listen(PORT, (err) => { 
   if (err) console.log('THERE WAS AN ERROR');

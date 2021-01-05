@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const async = require('async');
 const faker = require('faker');
-const category = require('../models/category');
 const Category = require('../models/category');
 const Product = require('../models/products');
 
@@ -24,7 +23,8 @@ router.get('/:name', (req, res, next) => {
       })
     },
     function (category, callback) {
-      for (let i = 0; i < 30; i++) {
+      const count = 30;
+      for (let i = 0; i < count; i++) {
         let product = new Product();
         product.category = category._id;
         product.name = faker.commerce.productName();
@@ -35,7 +35,13 @@ router.get('/:name', (req, res, next) => {
       }
     }
   ]);
-  res.json({ message: 'Success' });
+  // res.send('<h1>Success added 30 Products</h1>');
+  // res.render('main/404');
+  res.send(`<div class=container>
+              <h1 class="text-center" style="text-align">
+                Successfully added 30 Products
+              </h1>
+            </div>`);
 })
 
 

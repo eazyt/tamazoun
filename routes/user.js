@@ -13,12 +13,33 @@ router.get('/login', function (req, res) {
   });
 });
 
+
+
+// router.post('/login',
+//   passport.authenticate('local-login', {
+//     successRedirect: '/profile',
+//     failureRedirect: '/login',
+//     failureFlash: true
+//   }));
+
 router.post('/login',
-  passport.authenticate('local-login', {
-    successRedirect: '/profile',
+  passport.authenticate('local', {
     failureRedirect: '/login',
     failureFlash: true
-}));
+  }),
+  function (req, res) {
+    res.redirect('/profile');
+  });
+
+
+
+
+
+
+
+
+
+
 
 router.get('/profile', passportConf.isAuthenticated, function (req, res, next) {
   User.findOne({
@@ -44,21 +65,25 @@ router.post('/register', function (req, res, next) {
 
   async.waterfall([
     function (callback) {
-      let user = new User();
+      const user = new User();
 
       user.profile.name = req.body.name;
       user.email = req.body.email;
       user.password = req.body.password;
       user.profile.picture = user.gravatar();
 
+      console.log(user + 'USER INPUT')
+      
       User.findOne({
         email: req.body.email
       }, function (err, existingUser) {
-
+        console.log(existingUser + 'THIS EXISTING USER')
+        
         if (existingUser) {
           req.flash('errors', 'Email address already exists');
           return res.redirect('/register');
         } else {
+          console.log(user + 'THIS is before save USER')
           user.save(function (err, user) {
             if (err) return next(err);
             callback(null, user);
