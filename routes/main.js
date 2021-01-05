@@ -3,7 +3,7 @@ const Cart = require('../models/cart');
 const Product = require('../models/products');
 const stripeSecrets = require('../config/stripe-secrets')
 const async = require('async');
-const user = require('../models/user');
+const User = require('../models/user');
 
 
 // secret-key
@@ -103,6 +103,7 @@ router.get('/search', (req, res, next) => {
       const data = results.hits.hits.map((hit) => {
         return hit;
       })
+        // console.log(data._id)
       res.render('main/search-result', {
         query: req.query.q,
         data: data
@@ -186,7 +187,6 @@ router.get('/cart', (req, res, next) => {
       })
       .populate('items.item')
       .exec((err, foundCart) => {
-        // console.log(foundCart)
         if (err) return next(err);
         res.render('main/cart', {
           foundCart: foundCart,
@@ -206,9 +206,10 @@ router.post('/payment', function (req, res) {
 
   // Moreover you can take more details from user 
   // like Address, Name, etc from form 
+  // email: req.body.stripeEmail,
+  // console.log(req.body.stripeToken + 'THIS IS TOKEN')
   stripe.customers.create({
-      email: req.body.stripeEmail,
-      source: req.body.stripeToken,
+    source: req.body.stripeToken,
       name: 'Eazy T',
       address: {
         line1: '123 Main st',
@@ -217,12 +218,11 @@ router.post('/payment', function (req, res) {
         state: 'Gauteng',
         country: 'South Africa',
       }
-    })
+  })
     .then((customer) => {
 
       return stripe.charges.create({
         amount: req.body.amount * 100, // Charing Rs 25 
-        description: 'Web Development Product',
         currency: 'USD',
         customer: customer.id
       });
@@ -235,9 +235,11 @@ router.post('/payment', function (req, res) {
           })
         },
         function (cart,callback) { 
-          user.findOne({ _id: req.user._id }, (err, user) => {
+          User.findOne({ _id: req.user._id }, (err, user) => {
             if (user) {
-              for (let i = 0; i < cart.length; i++) {
+              console.log(cart)
+              for (let i = 0; i < cart.items.length; i++) {
+                console.log(user.history)
                 user.history.push({
                   item: cart.items[i].item,
                   paid: cart.items[i].price

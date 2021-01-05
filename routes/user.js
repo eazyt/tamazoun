@@ -20,16 +20,11 @@ router.post('/login',
   failureFlash: true
 }));
 
-// User.findOne({ _id: req.user._id })
-//   .((err, user) => {
-//   if (err) return next(err);
 
-//   res.render('accounts/profile', {
-//     user: user
-//   });
+router.get('/profile', passportConf.isAuthenticated, function (req, res, next) {
+  // res.send('hello')
 
-// })
-router.get('/profile', passort.authenticate, function (req, res, next) {
+
   User.findOne({ _id: req.user._id })
     .populate('history.item')
     .exec((err, foundUser) => {
@@ -40,6 +35,50 @@ router.get('/profile', passort.authenticate, function (req, res, next) {
       })
     });
 })
+
+  // Product.find({
+  //     category: req.params.id
+  //   })
+  //   .populate('category')
+  //   .exec((err, products) => {
+  //     if (err) return next(err + 'ERROR FROM THEN PRODUCT FIND BY ID')
+  //     res.render('main/category', {
+  //       products: products
+  //     })
+  //   })
+
+  //     User.findOne({
+  //         _id: req.user._id
+  //       })
+  //       .populate('history.item')
+  //       .exec((err, foundUser) => {
+  //         if (err) return next(err);
+
+  //         res.render('accounts/profile', {
+  //           user: foundUser
+  //         })
+  //       });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get('/register', function(req, res, next) {
   res.render('accounts/register', {
@@ -76,6 +115,7 @@ router.post('/register', function (req, res, next) {
     function (user) { 
       let cart = new Cart();
       cart.owner = user._id;
+
       cart.save((err) => { 
         if (err) return next(err);
         req.logIn(user, function (err) {

@@ -22,15 +22,29 @@
                 <span><img class="product-image" src="<%= foundCart.items[i].item.image %>"></span>
               </div>
               <div class="col-md-6">
-                <p class="list-group-item-heading"><%= foundCart.items[i].item.name %></p>
+                <p class="list-group-item-heading"><strong> Item Name: </strong><%= foundCart.items[i].item.name %></p>
+                <!-- <h4>Quantiy:<strong><%= foundCart.items[i].quantity %></strong></h4> -->
               </div>
               <div class="col-md-3">
-                <p><%= foundCart.items[i].quantity %></p>
-                <h4><%= foundCart.items[i].price %></h4>
+                <h4 id="priceHidden" >Quantiy: <strong><%= foundCart.items[i].quantity %></strong></h4>
+                <!-- <p><span></span></p> -->
+                <p><strong> Amount: </strong> <%= foundCart.items[i].price %></p>
+
+
+                
+                <!-- future code to plus and minus button -->
+<!-- 
+                <div class="btn-group" role="group" aria-label="...">
+                  <input type="hidden" name="quantity" id="quantity" value="1"></input>
+                  <button type="button" id="minus" class="btn btn-default">-</button>
+                  <button type="button" id="total" class="btn btn-default">1</button>
+                  <button type="button" id="plus" class="btn btn-default">+</button>
+                </div> -->
 
                 <form action="/remove" method="post">
                   <input type="hidden" name="item" value="<%= foundCart.items[i]._id %>">
                   <input type="hidden" name="price" value="<%= foundCart.items[i].price %>">
+
                   <button type="submit" type="button">Remove</button>
                 </form>
               </div>
@@ -49,7 +63,7 @@
     <div class="col-md-3">
       <div class="list-group">
         <span class="list-group-item">
-          <h4>Total: $ <span class="totalPrice"><%= foundCart.total %></span></h4>
+          <h4><strong> Total: </strong> $ <span class="totalPrice"><%= foundCart.total %></span></h4>
   
           <div class="form-group">
             <input type="hidden" value="<%= foundCart.total %>">
@@ -91,7 +105,8 @@
           <div class="modal-body">
             <div class="container">
               <h3>Welcome to Payment Gateway</h3>
-              <h4>Total: $ <span class="totalPrice">
+              <!-- furure insert the list of items you buying -->
+              <h4><strong> Total: </strong> $ <span class="totalPrice">
                   <%= amountToDec %>
                 </span>
               </h4>

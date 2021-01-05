@@ -2,17 +2,40 @@
 
 <h2 style="text-align:center">User Profile Card</h2>
 
-<div class="card-profile">
-  <!-- <img src="/images/user_1.jpg" alt="John" style="width:100%"> -->
-  <img src="<%= user.profile.picture %>" class="img-circle img-fluid img-center" alt="user_image">
-  <h1><%= user.profile.name %></h1>
-  <p class="title-profile">CEO & Founder, Example</p>
-  <p>Address: <%= user.address %></p>
-  <div style="margin: 24px 0;">
-    <a href="#" class="my-a-tags-profile"><i class="fa fa-dribbble"></i></a>
-    <a href="#" class="my-a-tags-profile"><i class="fa fa-twitter"></i></a>
-    <a href="#" class="my-a-tags-profile"><i class="fa fa-linkedin"></i></a>
-    <a href="#" class="my-a-tags-profile"><i class="fa fa-facebook"></i></a>
+<div class="container">
+  <div class="row">
+    <div class="card-profile col-md-4 col-sm-6">
+      <img src="<%= user.profile.picture %>" class="img-circle img-fluid img-center" alt="user_image">
+      <h1><%= user.profile.name %></h1>
+      <p class="title-profile">CEO & Founder, Example</p>
+      <p>Address: <%= user.address %></p>
+      <div style="margin: 24px 0;">
+        <a href="#" class="my-a-tags-profile"><i class="fa fa-dribbble"></i></a>
+        <a href="#" class="my-a-tags-profile"><i class="fa fa-twitter"></i></a>
+        <a href="#" class="my-a-tags-profile"><i class="fa fa-linkedin"></i></a>
+        <a href="#" class="my-a-tags-profile"><i class="fa fa-facebook"></i></a>
+      </div>
+      <a href="/edit-profile" class="profile-btn">Edit Profile</a>
+    </div>
+
+    <div class="col-md-6">
+      <h2 class="text-center">History</h2>
+      <table class="table table-striped sticky-header">
+        <thead>
+            <tr>
+              <th>Item's Name</th>
+              <th>Paid: </th>
+            </tr>
+            <tbody>
+              <% for(var i=0; i < user.history.length; i++){ %>
+                <tr>
+                  <td><%= user.history[i].item.name %></td>
+                  <td>$<%= user.history[i].paid %></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </thead>
+      </table>
+    </div>
   </div>
-  <a href="/edit-profile" class="profile-btn">Edit Profile</a>
 </div>
