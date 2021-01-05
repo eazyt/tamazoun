@@ -1,6 +1,6 @@
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var User = require('../models/user');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('../models/user');
 
 // serialize and deserialize
 passport.serializeUser(function(user, done) {
@@ -12,7 +12,6 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
-
 
 //Middleware
 passport.use('local-login', new LocalStrategy({
@@ -33,30 +32,6 @@ passport.use('local-login', new LocalStrategy({
     return done(null, user);
   });
 }));
-
-
-// passport.use(new LocalStrategy({
-//   usernameField: 'email',
-//   passwordField: 'password',
-//   passReqToCallback: true
-// }, async (req, email, password, username, done) => { 
-//     try {
-//       const user = await User.findOne({ email: username }).exec();
-//       if (!user) return done(null, false, {
-//         loginMessage: "No User found"
-//       });
-
-//       const correctPassword = await user.comparePassword(password);
-//       if (!correctPassword) return done(null, false, {
-//         loginMessage: 'try again'
-//       })
-//     } catch (error) {
-//       return done(error)
-//     }
-// }))
-
-
-
 
 //custom function to validate
 exports.isAuthenticated = function(req, res, next) {
